@@ -18,9 +18,10 @@ return new class extends Migration
             $table->string('descricao');
             $table->float('valor', precision: 2);
             $table->enum('status', ['pending', 'paid', 'expired', 'failed']);
-            $table->string('payment_method');
+            $table->string('payment_method_slug');
             $table->date('data_pagamento');
         });
+
     }
 
     /**
