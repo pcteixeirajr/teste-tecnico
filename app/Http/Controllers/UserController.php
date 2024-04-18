@@ -13,6 +13,8 @@ class UserController extends Controller
 
         $login = Auth::attempt($body);
         if ($login) {
+            //'email' => ['required', 'email:filter'],
+            // 'password' => ['required', 'string']
             $user = Auth::user();
             $token = auth()->login($user);
             return response()->json([

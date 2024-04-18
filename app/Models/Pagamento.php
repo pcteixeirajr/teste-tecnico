@@ -9,13 +9,18 @@ class Pagamento extends Model
 {
     use HasFactory;
     protected $table = 'pagamento';
+    public $timestamps = false;
     protected $fillable = [
         'nome_cliente',
         'cpf',
         'descricao',
         'valor',
         'status',
-        'payment_method_slug',
+        'payment_method',
         'data_pagamento'
     ];
+
+    public function payMeth(){
+        return $this->belongsTo(Payment_Method::class, 'payment_method', 'id');
+    }
 }

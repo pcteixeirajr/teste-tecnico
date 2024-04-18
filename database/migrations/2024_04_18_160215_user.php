@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unique('email');
             $table->string('password');
             $table->float('saldo', precision: 2);
-            $table->timestamps();
         });
     }
 
