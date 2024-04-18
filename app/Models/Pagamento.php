@@ -21,6 +21,6 @@ class Pagamento extends Model
     ];
 
     public function payMeth(){
-        return $this->belongsTo(Payment_Method::class, 'payment_method', 'id');
+        return $this->hasOne(Payment_Method::class, 'id', 'payment_method');
     }
 }

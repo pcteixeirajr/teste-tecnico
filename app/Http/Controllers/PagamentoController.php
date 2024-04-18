@@ -12,8 +12,7 @@ class PagamentoController extends Controller
 {
     public function newPayment (Request $request){
         $body = $request->all();
-
-        $validator = Validator::make($body, [
+        $validator = Validator::make($body, [ //validação do formulario
             'nome_cliente' => ['required', 'string'],
             'cpf' => ['required', 'string'],
             'descricao' => ['required', 'string'],
@@ -22,12 +21,10 @@ class PagamentoController extends Controller
             'payment_method' => ['required'],
             'data_pagamento' => ['required', 'date']
         ]);
-
-        if ($validator->fails()) {
+        if ($validator->fails()) { //retorno com os erros caso exista algum
             return response()->json($validator->errors(), 400);
         }
-
-        $payMethod = Payment_Method::where('slug', $body['payment_method'])->first()->id;
+        $payMethod = Payment_Method::where('slug', $body['payment_method'])->first()->id; 
         $payment = new Pagamento();
         $payment->fill($body);
         $payment->payment_method = $payMethod;
@@ -64,4 +61,5 @@ class PagamentoController extends Controller
             'Data de pagamento' => $singlePayment->data_pagamento
         ]);
     }
+
 }
