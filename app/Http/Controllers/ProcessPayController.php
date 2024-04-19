@@ -22,9 +22,18 @@ class ProcessPayController extends Controller
         }else{
             $pay = false;
         }
-
         $payment = Pagamento::where('id', $body['payment_id'])->first()->load('payMeth');
         $user = $request->user();
+
+        $dtAtual = date('Y-m-d');
+        $tsDtDb = strtotime($payment->data_pagamento);
+        $tsDtAt = strtotime($dtAtual);
+        if ($tsDtAt > $tsDtDb) {
+            $payment->status = 'expired';
+            $payment->save();
+            return response()->json(['message' => 'Esse pagamento está expirado'],303);
+        }
+
         if($payment->status == 'paid' || $payment->status == 'failed'){
             return response()->json(['message' => 'Esse pagamento já foi processado'],303);
         }

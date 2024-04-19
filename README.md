@@ -1,66 +1,399 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Documentação da API de pagamentos
+#### `Observações Importantes: `
+`O usuario padrão possui o seguinte email e senha: `
+ - `email: user@example.com`
+- `senha: senha#123`
+ 
+`Os testes encontram-se ao final desse documento`
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Para que a API funcione corretamente você deve executar dentro do projeto os seguintes comandos:
+- php artisan migrate
+- php artisan db:seed
 
-## About Laravel
+Eles são necessários para o funcionamento correto da API
+## Endpoint 1: Login
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Descrição
+Este endpoint permite que os usuários façam login na aplicação e obtenham o token JWT para acessar os outros endpoints.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Método
+`POST`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### URL
+`/api/login`
 
-## Learning Laravel
+### Corpo da Solicitação (Body)
+```json
+{
+    "email": "user@example.com",
+    "password": "senha#123"
+}
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Resposta de Sucesso
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Código:** 200 OK
+- **Corpo da Resposta:**
+```json
+{
+    "user": "usuário 1",
+    "saldo": 0,
+    "token": (apenas um exemplo de token) "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzEzDgyMjk5LCJleHAiOjE3MTM0ODU4OTksIm5iZiI6MTcxMzQ4MjI5OSwianRpIjoib3I3SFhVS2FBV1F0UlV6cCIInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.k4299pltMi6T5JDdTjSkN8UjSD97L3kZfGEL0hLPlw",
+    "token_type": "bearer",
+    "expires_in": 3600
+}
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Respostas de Erro
+##### Em caso de credenciais inválidas:
+- **Código:** 400 Bad Request
+- **Corpo da Resposta:**
+```json
+{
+    "message": "credenciais inválidas"
+}
+```
 
-## Laravel Sponsors
+##### Em caso de falta de credencial:
+- **Código:** 400 Bad Request
+- **Corpo da Resposta:**
+```json
+{
+    "email": [
+        "The email field is required."
+    ],
+    "password": [
+        "The password field is required."
+    ]
+}
+```
+##### Em caso de formato inválido de email:
+- **Código:** 400 Bad Request
+- **Corpo da Resposta:**
+```json
+{
+    "email": [
+        "The email field must be a valid email address."
+    ]
+}
+```
+## Endpoint 2: Payments
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Descrição
+Este endpoint permite o registro de novos pagamentos na aplicação.
 
-### Premium Partners
+### Método
+`POST`
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### URL
+`/api/payments`
 
-## Contributing
+### Header Requerido
+```json
+{
+    "Authorization": "Bearer (token gerado no login)"
+}
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Corpo da Solicitação (Body)
+```json
+{
+    "nome_cliente": "nome do cliente",
+    "cpf": "cpf do cliente",
+    "descricao": "descrição do pagamento",
+    "valor": valor do pagamento (float),
+    "status": "(pending, paid, expired, failed)",
+    "payment_method": "(pix, boleto, bank_transfer)",
+    "data_pagamento": "YYYY-MM-DD"
+}
+```
 
-## Code of Conduct
+### Resposta de Sucesso
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Código:** 201 Created
+- **Corpo da Resposta:**
+```json
+{
+    "message": "Novo pagamento registrado com sucesso!"
+}
+```
 
-## Security Vulnerabilities
+### Resposta de Erro
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Código:** 400 Bad Request
+- **Corpo da Resposta:**
+```json
+{
+    "field": [
+        "field error"
+    ],
+    "field": [
+        "field error"
+    ],
+    [...]
+}
+```
 
-## License
+### Resposta de Token Inválido ou Faltando
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Código:** 401 Unauthorized
+- **Corpo da Resposta:**
+```json
+{
+    "message": "Unauthenticated."
+}
+```
+## Endpoint 3: Pagamentos
+
+### Descrição
+Este endpoint permite ter um resumo de todos pagamentos registrados.
+
+### Método
+`GET`
+
+### URL
+`/api/payments`
+
+### Header Requerido
+```json
+{
+    "Authorization": "Bearer (token gerado no login)"
+}
+```
+
+### Resposta de Sucesso
+
+    - **Código:** 200
+    - **Resposta:**
+      ```json
+      {
+          "ID": "id do pagamento",
+          "Nome do cliente": "nome do cliente",
+          "Valor": "valor do pagamento",
+          "Status": "status do pagamento"
+          "Data do pagamento": "YYYY-MM-DD"
+      },
+      {...}
+      ```
+
+### Resposta de Token Inválido ou Faltando
+
+- **Código:** 401 Unauthorized
+- **Corpo da Resposta:**
+```json
+{
+    "message": "Unauthenticated."
+}
+```
+
+# Endpoint 4: Payments/{id}
+
+## Descrição
+Este endpoint permite obter os detalhes do pagamento escolhido.
+
+### Método
+`GET`
+
+### URL
+`/api/payments/{id}`
+
+### Header Requerido
+```json
+{
+    "Authorization": "Bearer (token gerado no login)"
+}
+```
+## Resultados
+
+### Em caso de sucesso:
+- Código: 200
+- Resposta:
+    ```
+    {
+        "Id": 1,
+        "Nome do cliente": "nome do cliente",
+        "CPF": "cpf do cliente",
+        "Descrição": "descrição do pagamento",
+        "Valor": valor do pagamento,
+        "Status": "status do pagamento",
+        "Payment Method": "slug do método de pagamento",
+        "Data de pagamento": "YYYY-MM-DD"
+    }
+    ```
+
+### Em caso de token faltando ou inválido:
+- Código: 401
+- Resposta:
+    ```
+    {
+        "message": "Unauthenticated."
+    }
+    ```
+## Endpoint 5: Payments/Proccess
+
+## Descrição
+Este endpoint permite processar o pagamento pagamento escolhido.
+
+### Método
+`POST`
+
+### URL
+`/api/payments/{id}`
+
+### Header Requerido
+```json
+{
+    "Authorization": "Bearer (token gerado no login)"
+}
+```
+
+### Corpo da Requisição
+```json
+{
+    "payment_id": 2
+}
+```
+
+### Resultados
+
+#### Em caso de pagamento aprovado:
+- **Código:** 200
+- **Resposta:**
+```json
+{
+    "status": "O pagamento foi aprovado",
+    "saldo": "O saldo atual é de: R$102"
+}
+```
+
+#### Em caso de pagamento recusado:
+- **Código:** 400
+- **Resposta:**
+```json
+{
+    "status": "O pagamento foi recusado",
+    "saldo": "O saldo atual é de: R$0"
+}
+```
+
+#### Em caso de pagamento expirado:
+- **Código:** 303
+- **Resposta:**
+```json
+{
+    "message": "Esse pagamento está expirado"
+}
+```
+
+#### Em caso de pagamento já processado:
+- **Código:** 303
+- **Resposta:**
+```json
+{
+    "message": "Esse pagamento já foi processado"
+}
+```
+
+#### Em caso de token faltando ou inválido:
+- **Código:** 401
+- **Resposta:**
+```json
+{
+    "message": "Unauthenticated."
+}
+```
+
+***
+
+
+# Teste do endpoint 2: payments
+
+## Método
+- **POST**
+
+## Header
+```json
+{
+	“Authorization” : “Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzEzNDg2NTYwLCJleHAiOjE3MTM0OTAxNjAsIm5iZiI6MTcxMzQ4NjU2MCwianRpIjoidGdUSlJiRmE0RWdYRmFPZiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.oFprvIk0qZQaWH7VWoNTKYp-crYKFvd2AvM9Ntup6tY
+”
+}
+```
+
+## Body
+```json
+{
+    "nome_cliente": "João Miguel",
+    "cpf": "11223344556",
+    "descricao": "Reforma da cozinha e instalação de ar-condicionado na sala de estar",
+    "valor": 6000.50,
+    "status":"pending",
+    "payment_method": "bank_transfer",
+    "data_pagamento": "2024-05-01"
+}
+```
+
+## Resultado
+- **Código**: 201
+
+- **Resposta**
+```json
+{
+    "message": "Novo pagamento registrado com sucesso!"
+}
+```
+
+# Teste do endpoint 3: payments
+
+## Método
+- **GET**
+
+## Header
+```json
+{
+	“Authorization” : “Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzEzNDg2NTYwLCJleHAiOjE3MTM0OTAxNjAsIm5iZiI6MTcxMzQ4NjU2MCwianRpIjoidGdUSlJiRmE0RWdYRmFPZiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.oFprvIk0qZQaWH7VWoNTKYp-crYKFvd2AvM9Ntup6tY
+”
+}
+```
+
+## Resultado
+- **Código**: 200
+
+- **Resposta**
+```json
+{
+    "ID": 1,
+    "Nome do cliente": "João Miguel",
+    "Valor": 6000.5,
+    "Status": "pending",
+    "Data do pagamento": "2024-05-01"
+}
+```
+# Teste do endpoint 4: payments/1
+
+## Método
+- **GET**
+
+## Header
+```json
+{
+	“Authorization” : “Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzEzNDg2NTYwLCJleHAiOjE3MTM0OTAxNjAsIm5iZiI6MTcxMzQ4NjU2MCwianRpIjoidGdUSlJiRmE0RWdYRmFPZiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.oFprvIk0qZQaWH7VWoNTKYp-crYKFvd2AvM9Ntup6tY
+”
+}
+```
+
+## Resultado
+- **Código**: 200
+
+- **Resposta**
+```json
+{
+    "Id": 1,
+    "Nome do cliente": "João Miguel",
+    "CPF": "11223344556",
+    "Descrição": "Reforma da cozinha e instalação de ar-condicionado na sala de estar",
+    "Valor": 6000.5,
+    "Status": "pending",
+    "Payment Method": "bank_transfer",
+    "Data de pagamento": "2024-05-01"
+}
+```

@@ -30,7 +30,7 @@ class PagamentoController extends Controller
         $payment->payment_method = $payMethod;
         $payment->save();
         return response()->json([
-            'Novo pagamento registrado com sucesso!'
+            'message' => 'Novo pagamento registrado com sucesso!'
         ], 201);
     }
 
@@ -42,6 +42,7 @@ class PagamentoController extends Controller
                 'ID' => $item->id,
                 'Nome do cliente' => $item->nome_cliente,
                 'Valor' => $item->valor,
+                'Status' => $item->status,
                 'Data do pagamento' => $item->data_pagamento
             ]);
         }
