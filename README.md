@@ -5,8 +5,10 @@
 - `senha: senha#123`
  
 `Os testes encontram-se ao final desse documento`
+`Faça o .env de acordo com o exemplo em .env.example`
 
 Para que a API funcione corretamente você deve executar dentro do projeto os seguintes comandos:
+- php artisan jwt:secret
 - php artisan migrate
 - php artisan db:seed
 
