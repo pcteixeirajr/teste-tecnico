@@ -1,4 +1,10 @@
 # Documentação da API de pagamentos
+
+#### ` Tecnologia utilizad: `
+`PHP`
+`Laravel`
+`MySQL`
+
 #### `Observações Importantes: `
 `O usuario padrão possui o seguinte email e senha: `
  - `email: user@example.com`
